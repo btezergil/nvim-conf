@@ -20,6 +20,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ["<Tab>"] = cmp.mapping.select_next_item(cmp_select),
   ["<CR>"] = cmp.mapping.confirm({ select = true }),
   ["<C-Space>"] = cmp.mapping.complete(),
+  ["<Esc>"] = cmp.mapping.close(),
 })
 local cmp_sources = {
     {name='conjure'}
