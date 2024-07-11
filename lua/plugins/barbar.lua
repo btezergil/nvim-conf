@@ -2,7 +2,6 @@ return{
     {'romgrk/barbar.nvim',
         init = function() vim.g.barbar_auto_setup = true end,
         dependencies = {
-            'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
             'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
         },
         opts = {
@@ -13,11 +12,11 @@ return{
             local opts = { noremap = true, silent = true }
 
             -- Move to previous/next
-            map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
-            map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+            map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true , desc = 'Go to previous buffer'})
+            map('n', '<A-.>', '<Cmd>BufferNext<CR>', { noremap = true, silent = true , desc = 'Go to next buffer'})
             -- Re-order to previous/next
-            map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
-            map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+            map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', { noremap = true, silent = true , desc = 'Move buffer left'})
+            map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', { noremap = true, silent = true , desc = 'Move buffer right'})
             -- Goto buffer in position...
             -- map('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
             -- map('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
@@ -32,7 +31,7 @@ return{
             -- Pin/unpin buffer
             map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
             -- Close buffer
-            map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
+            map('n', '<A-c>', '<Cmd>BufferClose<CR>', { noremap = true, silent = true , desc = '[C]lose buffer'})
             -- Wipeout buffer
             --                 :BufferWipeout
             -- Close commands
@@ -42,7 +41,7 @@ return{
             --                 :BufferCloseBuffersLeft
             --                 :BufferCloseBuffersRight
             -- Magic buffer-picking mode
-            map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
+            map('n', '<C-p>', '<Cmd>BufferPick<CR>', { noremap = true, silent = true , desc = 'Buffer [p]icker'})
             -- Sort automatically by...
             map('n', '<Space>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
             map('n', '<Space>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)

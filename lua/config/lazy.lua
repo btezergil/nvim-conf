@@ -34,20 +34,8 @@ require("lazy").setup({
     "tpope/vim-dispatch",
     "clojure-vim/vim-jack-in",
     "radenling/vim-dispatch-neovim",
-
+    
     "tpope/vim-obsession",
-    {
-        "folke/which-key.nvim",
-        config = function()
-            vim.o.timeout = true
-            vim.o.timeoutlen = 300
-            require("which-key").setup {
-             -- your configuration comes here
-             -- or leave it empty to use the default settings
-             -- refer to the configuration section below
-            }
-        end
-    },
     
     spec = {
         -- import your plugins
