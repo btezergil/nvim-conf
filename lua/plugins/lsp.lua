@@ -9,10 +9,22 @@ return{
       lsp.preset("recommended")
 
       lsp.ensure_installed({
+        -- Clojure
         'clojure_lsp',
+        'clj-kondo',
+        'cljfmt',
+
+        -- Lua
         'lua_ls',
-        'java_language_server',
+        'luacheck',
+        'stylua',
+
+        -- Python
         'pyright',
+        'pylint',
+        'black',
+        
+        'java_language_server',
         'dockerls'
       })
 
