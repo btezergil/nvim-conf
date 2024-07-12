@@ -3,9 +3,10 @@ return {
     "Olical/conjure",
     ft = { "clojure"}, -- etc
     lazy = true,
+    event = 'VeryLazy',
     init = function()
       -- Set configuration options here
-      vim.g["conjure#debug"] = true
+      vim.g["conjure#debug"] = false
     end,
     config = function()
       vim.g["conjure#filetype#fennel"] = "conjure.client.fennel.stdio"
@@ -140,6 +141,7 @@ return {
   {
     "PaterJason/cmp-conjure",
     lazy = true,
+    event = 'VeryLazy',
     config = function()
       local cmp = require("cmp")
       local config = cmp.get_config()
