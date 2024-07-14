@@ -12,4 +12,12 @@ return{
     {"radenling/vim-dispatch-neovim",},
     
     {"tpope/vim-obsession",},
+
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = {
+          signs = false
+        }
+    }
 }

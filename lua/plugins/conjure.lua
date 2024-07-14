@@ -25,7 +25,7 @@ return {
       vim.g["conjure#mapping#log_vsplit"] = false
       vim.g["conjure#mapping#log_toggle"] = false
 
-      --[[local grp = vim.api.nvim_create_augroup("conjure_hooks", { clear = true })
+      --[[ local grp = vim.api.nvim_create_augroup("conjure_hooks", { clear = true })
       vim.api.nvim_create_autocmd("BufEnter", {
         group = grp,
         pattern = "conjure-log-*",
@@ -35,13 +35,11 @@ return {
             vim.lsp.buf_detach_client(event.buf, client.id)
           end
         end,
-      })]]--
+      }) ]]
 
       local function connect_cmd()
         vim.api.nvim_feedkeys(":ConjureConnect localhost:", "n", false)
       end
-
-      local wk = require("which-key")
 
       local function conjure_log_open(is_vertical)
         local log = require("conjure.log")
@@ -79,60 +77,39 @@ return {
         end
       end
 
-      wk.register({
-        c = {
-          name = "Connect",
-          cond = vim.bo.filetype == "clojure",
-          c = { connect_cmd, "Connect to specific port" },
-        },
-        g = "Go to",
-        e = {
-          name = "Evaluate",
-          c = { name = "To Comment" },
-          -- ["["] = "Square Head Wrap List",
-          -- ["]"] = "Square Tail Wrap List",
-          -- ["{"] = "Curly Head Wrap List",
-          -- ["}"] = "Curly Tail Wrap List",
-        },
-        r = "Refresh",
-        s = "Session",
-        t = "Tests",
-        v = "Display",
-        -- ["?"] = "Convolute",
-        -- ["@"] = "Splice List",
-        -- ["["] = "Square Head Wrap List",
-        -- ["]"] = "Square Tail Wrap List",
-        -- ["{"] = "Curly Head Wrap List",
-        -- ["}"] = "Curly Tail Wrap List",
-        -- ["h"] = "Insert at List Head",
-        -- ["I"] = "Round Tail Wrap List",
-        -- ["i"] = "Round Head Wrap List",
-        ["l"] = {
-          name = "Conjure Log",
-          g = {
-            function()
-              conjure_log_toggle()
-            end,
-            "Toggle",
-          },
-          v = {
-            function()
-              conjure_log_open(true)
-            end,
-            "Open VSplit",
-          },
-          s = {
-            function()
-              conjure_log_open(false)
-            end,
-            "Open Split",
-          },
-        },
-        -- ["o"] = "Raise List",
-        -- ["O"] = "Raise Element",
-        -- ["W"] = "Round Tail Wrap Element",
-        -- ["w"] = "Round Head Wrap Element",
-      }, { prefix = "<localleader>" })
+      local wk = require("which-key")
+      wk.add({
+        { "<localleader>e", group = "Evaluate" },
+        { "<localleader>e[", desc = "Square Head Wrap Element" },
+        { "<localleader>e]", desc = "Square Tail Wrap Element" },
+        { "<localleader>e{", desc = "Curly Head Wrap Element" },
+        { "<localleader>e}", desc = "Curly Tail Wrap Element" },
+        { "<localleader>ec", group = "To Comment" },
+        { "<localleader>c", group = "Connect" },
+        { "<localleader>g", desc = "Go to" },
+        { "<localleader>l", group = "Conjure Log" },
+        { "<localleader>lg", function() conjure_log_toggle() end, desc = "Toggle" },
+        { "<localleader>ls", function() conjure_log_open(false) end, desc = "Open Split" },
+        { "<localleader>lv", function() conjure_log_open(true) end, desc = "Open VSplit" },
+        { "<localleader>r", desc = "Refresh" },
+        { "<localleader>s", desc = "Session" },
+        { "<localleader>t", desc = "Tests" },
+        { "<localleader>v", desc = "Display" },
+        { "<localleader>?", desc = "Convolute" },
+        { "<localleader>@", desc = "Splice List" },
+        { "<localleader>[", desc = "Square Head Wrap List" },
+        { "<localleader>]", desc = "Square Tail Wrap List" },
+        { "<localleader>{", desc = "Curly Head Wrap List" },
+        { "<localleader>}", desc = "Curly Tail Wrap List" },
+        { "<localleader>h", desc = "Insert at List Head" },
+        { "<localleader>@", desc = "Splice List" },
+        { "<localleader>i", desc = "Round Head Wrap List" },
+        { "<localleader>I", desc = "Round Tail Wrap List" },
+        { "<localleader>o", desc = "Raise List" },
+        { "<localleader>O", desc = "Raise Element" },
+        { "<localleader>w", desc = "Round Head Wrap Element" },
+        { "<localleader>W", desc = "Round Tail Wrap Element" }
+      })
     end,
 
     -- Optional cmp-conjure integration
@@ -148,7 +125,7 @@ return {
       table.insert(config.sources, { name = "conjure" })
       return cmp.setup(config)
     end,
-  },
+  }
 }
 
 
