@@ -136,6 +136,9 @@ _G._generate_user_statusline_highlights = function()
     UserSLAlt = pal.sel,
     UserSLAltSep = { fg = pal.sl.bg, bg = pal.sel.bg },
     UserSLGitBranch = { fg = pal.yellow, bg = pal.sl.bg },
+    UserSLGitAdd = { fg = pal.green, bg = pal.sl.bg },
+    UserSLGitChange = { fg = pal.yellow, bg = pal.sl.bg },
+    UserSLGitRemove = { fg = pal.red, bg = pal.sl.bg }
   }
 
   set_highlights(vim.tbl_extend("force", colors, groups))
@@ -301,6 +304,21 @@ local c = {
       return vim.b.gitsigns_status_dict ~= nil
     end,
   },
+  git_add = {
+    provider = "git_diff_added",
+    icon = "+ ",
+    hl = "UserSLGitAdd"
+  },
+  git_change = {
+    provider = "git_diff_changed",
+    icon = " ~ ",
+    hl = "UserSLGitChange"
+  },
+  git_remove = {
+    provider = "git_diff_removed",
+    icon = " - ",
+    hl = "UserSLGitRemove"
+  },
   file_type = {
     provider = function()
       return fmt(" %s ", vim.bo.filetype:upper())
@@ -395,6 +413,9 @@ local active = {
   { -- left
     c.vimode,
     c.gitbranch,
+    c.git_add,
+    c.git_change,
+    c.git_remove,
     c.fileinfo,
     c.default, -- must be last
   },

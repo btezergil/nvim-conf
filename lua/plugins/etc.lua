@@ -10,8 +10,6 @@ return{
     {"tpope/vim-dispatch",},
     {"clojure-vim/vim-jack-in",},
     {"radenling/vim-dispatch-neovim",},
-    
-    {"tpope/vim-obsession",},
 
     {
         "folke/todo-comments.nvim",

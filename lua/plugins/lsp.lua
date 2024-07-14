@@ -122,11 +122,12 @@ return{
         --
         -- This may be unwanted, since they displace some of your code
         if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-          map('<leader>th', function()
+          map('<leader>tih', function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-          end, '[T]oggle Inlay [H]ints')
+          end, '[T]oggle [I]nlay [H]ints')
         end
 
+        -- TODO: custom format nasil yapariz
         vim.keymap.set({'n', 'x'}, 'gq', function()
           vim.lsp.buf.format({async = false, timeout_ms = 10000})
         end, opts)
