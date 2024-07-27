@@ -62,7 +62,7 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "williamboman/mason-lspconfig.nvim" }
+			{ "williamboman/mason-lspconfig.nvim" },
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
@@ -118,7 +118,7 @@ return {
 					vim.lsp.buf.rename()
 				end, "[r]e[n]ame")
 				-- diagnostics
-				map("<leader>vd", function()
+				map("<leader>vdf", function()
 					vim.diagnostic.open_float()
 				end, "Open [d]iagnostic float")
 				map("[d", function()
@@ -176,11 +176,11 @@ return {
 			formatters_by_ft = {
 				lua = { "stylua" },
 				python = { "black" },
-				clojure = { "zprint" },
+				--clojure = { "zprint" },
 			},
 			-- Set up format-on-save
 			format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
-      log_level = vim.log.levels.WARN,
+			log_level = vim.log.levels.WARN,
 		},
 	},
 }
