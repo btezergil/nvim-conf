@@ -1,5 +1,6 @@
 vim.opt.guicursor = ""
 vim.g.have_nerd_font = true
+vim.cmd("language en_US")
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
@@ -41,6 +42,6 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
-vim.opt.inccommand = 'split'
+vim.opt.inccommand = "split"
