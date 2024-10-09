@@ -89,6 +89,7 @@ return {
 				{ "<localleader>e{", desc = "Curly Head Wrap Element" },
 				{ "<localleader>e}", desc = "Curly Tail Wrap Element" },
 				{ "<localleader>ec", group = "To Comment" },
+				{ "<localleader>ei", group = "Interrupt Eval" },
 				{ "<localleader>c", group = "Connect" },
 				{ "<localleader>g", desc = "Go to" },
 				{ "<localleader>l", group = "Conjure Log" },

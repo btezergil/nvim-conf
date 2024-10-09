@@ -6,7 +6,7 @@ return {
 		keys = {
 			{
 				"<leader>xq",
-				"<cmd>Trouble quickfix toggle<cr>",
+				"<cmd>Trouble quickfix toggle win.position=bottom win.size=0.2<cr>",
 				desc = "[q]uickfix list",
 			},
 			{
@@ -16,7 +16,7 @@ return {
 			},
 			{
 				"<leader>xw",
-				"<cmd>Trouble diagnostics toggle<cr>",
+				"<cmd>Trouble diagnostics toggle focus=true win.type=float<cr>",
 				desc = "[w]orkspace diagnostics",
 			},
 			{
