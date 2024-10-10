@@ -32,7 +32,7 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
-vim.opt.colorcolumn = "200"
+vim.opt.colorcolumn = "150"
 vim.opt.cursorline = true
 
 vim.opt.ignorecase = true

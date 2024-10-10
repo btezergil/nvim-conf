@@ -15,6 +15,9 @@ return {
 		lazy = false,
 		config = true,
 	},
+	{
+		"nvim-lua/lsp-status.nvim",
+	},
 	-- Autocompletion
 	{
 		"hrsh7th/nvim-cmp",
@@ -69,6 +72,9 @@ return {
 			local lsp_zero = require("lsp-zero")
 			lsp_zero.extend_lspconfig()
 
+			local lsp_status = require("lsp-status")
+			lsp_status.register_progress()
+
 			lsp_zero.set_preferences({
 				suggest_lsp_servers = false,
 				sign_icons = {
@@ -99,6 +105,7 @@ return {
 				-- see :help lsp-zero-keybindings
 				-- to learn the available actions
 				-- lsp_zero.default_keymaps({buffer = bufnr})
+				lsp_status.on_attach(client)
 				local map = function(keys, func, desc)
 					vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
 				end
