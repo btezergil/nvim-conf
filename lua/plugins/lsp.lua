@@ -18,6 +18,17 @@ return {
 	{
 		"nvim-lua/lsp-status.nvim",
 	},
+	{
+		"folke/lazydev.nvim",
+		ft = "lua", -- only load on lua files
+		opts = {
+			library = {
+				-- See the configuration section for more details
+				-- Load luvit types when the `vim.uv` word is found
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+			},
+		},
+	},
 	-- Autocompletion
 	{
 		"hrsh7th/nvim-cmp",
@@ -30,6 +41,13 @@ return {
 				"saadparwaiz1/cmp_luasnip", -- for autocompletion
 			},
 		},
+		opts = function(_, opts)
+			opts.sources = opts.sources or {}
+			table.insert(opts.sources, {
+				name = "lazydev",
+				group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+			})
+		end,
 		config = function()
 			-- Here is where you configure the autocompletion settings.
 			local lsp_zero = require("lsp-zero")
@@ -71,7 +89,6 @@ return {
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "williamboman/mason-lspconfig.nvim" },
-			{ "folke/neodev.nvim", opts = {} },
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
