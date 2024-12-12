@@ -7,7 +7,7 @@ return {
 			vim.keymap.set("n", "gs", function()
 				tinygit.interactiveStaging()
 			end, { desc = "[g]it interactive [s]taging" })
-			vim.keymap.set("n", "ga", "<cmd>Gitsigns add_hunk<CR>", { desc = "[g]it [a]dd hunk" }) -- gitsigns.nvim
+			vim.keymap.set("n", "ga", "<cmd>Gitsigns stage_hunk<CR>", { desc = "[g]it [a]dd hunk" }) -- gitsigns.nvim
 			vim.keymap.set("n", "gc", function()
 				tinygit.smartCommit()
 			end)
