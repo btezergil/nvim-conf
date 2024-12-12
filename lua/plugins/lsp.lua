@@ -23,7 +23,12 @@ return {
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
 		dependencies = {
-			{ "L3MON4D3/LuaSnip" },
+			{
+				"L3MON4D3/LuaSnip",
+				"hrsh7th/cmp-buffer", -- source for text in buffer
+				"hrsh7th/cmp-path", -- source for file system paths
+				"saadparwaiz1/cmp_luasnip", -- for autocompletion
+			},
 		},
 		config = function()
 			-- Here is where you configure the autocompletion settings.
@@ -52,8 +57,8 @@ return {
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "cmp-conjure" },
-				}, {
 					{ name = "buffer" },
+					{ name = "path" },
 				}),
 			})
 		end,
@@ -66,6 +71,7 @@ return {
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "williamboman/mason-lspconfig.nvim" },
+			{ "folke/neodev.nvim", opts = {} },
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
@@ -74,6 +80,10 @@ return {
 
 			local lsp_status = require("lsp-status")
 			lsp_status.register_progress()
+
+			local lspconfig = require("lspconfig")
+			local cmp_nvim_lsp = require("cmp_nvim_lsp")
+			local capabilities = cmp_nvim_lsp.default_capabilities()
 
 			lsp_zero.set_preferences({
 				suggest_lsp_servers = false,
@@ -165,12 +175,32 @@ return {
 					"pyright",
 					"java_language_server",
 					"dockerls",
+					"pylint",
+					"luacheck",
+					"clj-kondo",
 				},
 				handlers = {
 					-- this first function is the "default handler"
 					-- it applies to every language server without a "custom handler"
 					function(server_name)
-						require("lspconfig")[server_name].setup({})
+						lspconfig[server_name].setup({ capabilities = capabilities })
+					end,
+					["lua_ls"] = function()
+						-- configure lua server (with special settings)
+						lspconfig["lua_ls"].setup({
+							capabilities = capabilities,
+							settings = {
+								Lua = {
+									-- make the language server recognize "vim" global
+									diagnostics = {
+										globals = { "vim" },
+									},
+									completion = {
+										callSnippet = "Replace",
+									},
+								},
+							},
+						})
 					end,
 				},
 			})
