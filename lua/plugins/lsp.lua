@@ -56,7 +56,9 @@ return {
 			-- And you can configure cmp even more, if you want to.
 			local cmp = require("cmp")
 			local cmp_action = lsp_zero.cmp_action()
+			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 
+			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 			cmp.setup({
 				formatting = lsp_zero.cmp_format({ details = true }),
 				mapping = cmp.mapping.preset.insert({
@@ -110,7 +112,7 @@ return {
 					hint = "H",
 					info = "I",
 				},
-			})--[[ 
+			}) --[[
 
       lsp_zero.format_on_save({
         format_opts = {
@@ -176,9 +178,9 @@ return {
 				end
 
 				-- TODO: custom format nasil yapariz
-				vim.keymap.set({ "n", "x" }, "gq", function()
+				vim.keymap.set({ "n", "x" }, "<leader>vf", function()
 					vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
-				end, opts)
+				end, { desc = "[f]ormat code" })
 			end)
 
 			vim.diagnostic.config({
@@ -190,7 +192,7 @@ return {
 					"clojure_lsp",
 					"lua_ls",
 					"pyright",
-					"java_language_server",
+					"jdtls",
 					"dockerls",
 					"pylint",
 					"luacheck",
@@ -201,6 +203,19 @@ return {
 					-- it applies to every language server without a "custom handler"
 					function(server_name)
 						lspconfig[server_name].setup({ capabilities = capabilities })
+					end,
+					["clojure_lsp"] = function()
+						-- configure clojure LSP server (with special settings)
+						lspconfig["clojure_lsp"].setup({
+							capabilities = capabilities,
+							settings = {
+								clojure_lsp = {
+									java = {
+										decompile_jar_as_project = true,
+									},
+								},
+							},
+						})
 					end,
 					["lua_ls"] = function()
 						-- configure lua server (with special settings)
