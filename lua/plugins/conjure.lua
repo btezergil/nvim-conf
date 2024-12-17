@@ -84,10 +84,6 @@ return {
 			local wk = require("which-key")
 			wk.add({
 				{ "<localleader>e", group = "Evaluate" },
-				{ "<localleader>e[", desc = "Square Head Wrap Element" },
-				{ "<localleader>e]", desc = "Square Tail Wrap Element" },
-				{ "<localleader>e{", desc = "Curly Head Wrap Element" },
-				{ "<localleader>e}", desc = "Curly Tail Wrap Element" },
 				{ "<localleader>ec", group = "To Comment" },
 				{ "<localleader>ei", group = "Interrupt Eval" },
 				{ "<localleader>c", group = "Connect" },
@@ -120,18 +116,44 @@ return {
 				{ "<localleader>v", desc = "Display" },
 				{ "<localleader>?", desc = "Convolute" },
 				{ "<localleader>@", desc = "Splice List" },
+
+				{ "<localleader>i", desc = "Round Head Wrap List" },
+				{ "<localleader>I", desc = "Round Tail Wrap List" },
 				{ "<localleader>[", desc = "Square Head Wrap List" },
 				{ "<localleader>]", desc = "Square Tail Wrap List" },
 				{ "<localleader>{", desc = "Curly Head Wrap List" },
 				{ "<localleader>}", desc = "Curly Tail Wrap List" },
+
 				{ "<localleader>h", desc = "Insert at List Head" },
-				{ "<localleader>@", desc = "Splice List" },
-				{ "<localleader>i", desc = "Round Head Wrap List" },
-				{ "<localleader>I", desc = "Round Tail Wrap List" },
+				{ "<localleader>l", desc = "Insert at List Tail" },
 				{ "<localleader>o", desc = "Raise List" },
 				{ "<localleader>O", desc = "Raise Element" },
+
 				{ "<localleader>w", desc = "Round Head Wrap Element" },
 				{ "<localleader>W", desc = "Round Tail Wrap Element" },
+				{ "<localleader>e[", desc = "Square Head Wrap Element" },
+				{ "<localleader>e]", desc = "Square Tail Wrap Element" },
+				{ "<localleader>e{", desc = "Curly Head Wrap Element" },
+				{ "<localleader>e}", desc = "Curly Tail Wrap Element" },
+
+				{ "<localleader>>)", desc = "Slurp forwards" },
+				{ "<localleader>>(", desc = "Slurp backwards" },
+				{ "<localleader><)", desc = "Barf forwards" },
+				{ "<localleader><(", desc = "Barf backwards" },
+
+				{ "<localleader>>e", desc = "Drag element right" },
+				{ "<localleader><e", desc = "Drag element left" },
+				{ "<localleader>>f", desc = "Drag form right" },
+				{ "<localleader><f", desc = "Drag form left" },
+
+				{ "[", desc = "Go to previous close bracket" },
+				{ "]", desc = "Go to next open bracket" },
+				{ "<M-e>", desc = "Go to next element tail" },
+				{ "<M-b>", desc = "Go to previous element head" },
+				{ "<M-w>", desc = "Go to next element head" },
+				{ "<M-E>", desc = "Go to next tail" },
+				{ "<M-B>", desc = "Go to previous head" },
+				{ "<M-W>", desc = "Go to next head" },
 			})
 		end,
 

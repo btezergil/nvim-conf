@@ -1,6 +1,8 @@
 return {
 	{ "nvim-lua/plenary.nvim" },
 
+	{ "guns/vim-sexp" },
+	{ "tpope/vim-sexp-mappings-for-regular-people" },
 	{ "tpope/vim-repeat" },
 
 	-- Jack in to REPL from nvim
@@ -20,4 +22,3 @@ return {
 		opts = {},
 	},
 }
-
