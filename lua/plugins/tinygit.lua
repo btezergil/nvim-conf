@@ -6,14 +6,20 @@ return {
 			local tinygit = require("tinygit")
 			vim.keymap.set("n", "gs", function()
 				tinygit.interactiveStaging()
-			end, { desc = "[g]it interactive [s]taging" })
-			vim.keymap.set("n", "ga", "<cmd>Gitsigns stage_hunk<CR>", { desc = "[g]it [a]dd hunk" }) -- gitsigns.nvim
+			end, { desc = "Tinygit: [g]it interactive [s]taging" })
+			vim.keymap.set("n", "ga", "<cmd>Gitsigns stage_hunk<CR>", { desc = "Tinygit: [g]it [a]dd hunk" }) -- gitsigns.nvim
 			vim.keymap.set("n", "gc", function()
 				tinygit.smartCommit()
-			end)
+			end, { desc = "Tinygit: [g]it [c]ommit" })
 			vim.keymap.set("n", "gp", function()
 				tinygit.push()
-			end, { desc = "[g]it [p]ush" })
+			end, { desc = "Tinygit: [g]it [p]ush" })
+			vim.keymap.set("n", "gA", function()
+				tinygit.amendNoEdit()
+			end, { desc = "Tinygit: [g]it [A]mend" })
+			vim.keymap.set("n", "gh", function()
+				tinygit.fileHistory()
+			end, { desc = "Tinygit: [g]it file [h]istory" })
 		end,
 	},
 }
