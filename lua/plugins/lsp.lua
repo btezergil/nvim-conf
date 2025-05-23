@@ -11,9 +11,27 @@ return {
 		end,
 	},
 	{
-		"williamboman/mason.nvim",
-		lazy = false,
-		config = true,
+		"mason-org/mason.nvim",
+		opts = {},
+	},
+	{
+		"mason-org/mason-lspconfig.nvim",
+		opts = {
+			ensure_installed = {
+				"clojure_lsp",
+				"lua_ls",
+				"pyright",
+				"jdtls",
+				"dockerls",
+				"pylint",
+				"luacheck",
+				"clj-kondo",
+			},
+		},
+		dependencies = {
+			{ "mason-org/mason.nvim", opts = {} },
+			"neovim/nvim-lspconfig",
+		},
 	},
 	{
 		"nvim-lua/lsp-status.nvim",
@@ -90,7 +108,6 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "williamboman/mason-lspconfig.nvim" },
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
@@ -187,53 +204,87 @@ return {
 				virtual_text = true,
 			})
 
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"clojure_lsp",
-					"lua_ls",
-					"pyright",
-					"jdtls",
-					"dockerls",
-					"pylint",
-					"luacheck",
-					"clj-kondo",
+			-- Infers the full executable path based on shell command name
+			local read_exec_path = function(exec_name)
+				local handle = io.popen("which " .. exec_name)
+				local result = handle:read("*a"):gsub("\n", "")
+				handle:close()
+				return result
+			end
+
+			vim.lsp.config("clojure_lsp", {
+				settings = {
+					clojure_lsp = {
+						java = {
+							decompile_jar_as_project = true,
+						},
+					},
 				},
-				handlers = {
-					-- this first function is the "default handler"
-					-- it applies to every language server without a "custom handler"
-					function(server_name)
-						lspconfig[server_name].setup({ capabilities = capabilities })
-					end,
-					["clojure_lsp"] = function()
-						-- configure clojure LSP server (with special settings)
-						lspconfig["clojure_lsp"].setup({
-							capabilities = capabilities,
-							settings = {
-								clojure_lsp = {
-									java = {
-										decompile_jar_as_project = true,
-									},
-								},
+			})
+
+			vim.lsp.config("lua_ls", {
+				on_init = function(client)
+					if client.workspace_folders then
+						local path = client.workspace_folders[1].name
+						if
+							path ~= vim.fn.stdpath("config")
+							and (vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc"))
+						then
+							return
+						end
+					end
+
+					client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
+						runtime = {
+							-- Tell the language server which version of Lua you're using (most
+							-- likely LuaJIT in the case of Neovim)
+							version = "LuaJIT",
+							-- Tell the language server how to find Lua modules same way as Neovim
+							-- (see `:h lua-module-load`)
+							path = {
+								"lua/?.lua",
+								"lua/?/init.lua",
 							},
-						})
-					end,
-					["lua_ls"] = function()
-						-- configure lua server (with special settings)
-						lspconfig["lua_ls"].setup({
-							capabilities = capabilities,
-							settings = {
-								Lua = {
-									-- make the language server recognize "vim" global
-									diagnostics = {
-										globals = { "vim" },
-									},
-									completion = {
-										callSnippet = "Replace",
-									},
-								},
+						},
+						-- Make the server aware of Neovim runtime files
+						workspace = {
+							checkThirdParty = false,
+							library = {
+								vim.env.VIMRUNTIME,
+								-- Depending on the usage, you might want to add additional paths
+								-- here.
+								-- '${3rd}/luv/library'
+								-- '${3rd}/busted/library'
 							},
-						})
-					end,
+							-- Or pull in all of 'runtimepath'.
+							-- NOTE: this is a lot slower and will cause issues when working on
+							-- your own configuration.
+							-- See https://github.com/neovim/nvim-lspconfig/issues/3189
+							-- library = {
+							--   vim.api.nvim_get_runtime_file('', true),
+							-- }
+						},
+					})
+				end,
+				settings = {
+					Lua = {
+						diagnostics = {
+							globals = { "vim" },
+						},
+						completion = {
+							callSnippet = "Replace",
+						},
+					},
+				},
+			})
+
+			vim.lsp.config("pyright", {
+				settings = {
+					python = {
+						pythonPath = read_exec_path("python"),
+						venv = ".venv",
+						venvPath = "./.venv/",
+					},
 				},
 			})
 		end,
@@ -248,7 +299,7 @@ return {
 				--clojure = { "zprint" },
 			},
 			-- Set up format-on-save
-			format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
+			format_on_save = { timeout_ms = 5000, lsp_format = "fallback" },
 			log_level = vim.log.levels.WARN,
 		},
 	},

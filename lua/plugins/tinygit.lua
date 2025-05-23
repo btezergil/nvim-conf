@@ -15,7 +15,7 @@ return {
 				tinygit.push()
 			end, { desc = "Tinygit: [g]it [p]ush" })
 			vim.keymap.set("n", "gA", function()
-				tinygit.amendNoEdit()({ forcePushIfDiverged = true })
+				tinygit.amendNoEdit({ forcePushIfDiverged = true })
 			end, { desc = "Tinygit: [g]it [A]mend" })
 			vim.keymap.set("n", "gh", function()
 				tinygit.fileHistory()
