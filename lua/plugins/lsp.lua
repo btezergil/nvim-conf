@@ -1,9 +1,5 @@
 return {
     {
-        "mason-org/mason.nvim",
-        opts = {},
-    },
-    {
         "mason-org/mason-lspconfig.nvim",
         opts = {
             ensure_installed = {
@@ -38,9 +34,12 @@ return {
         dependencies = {
             {
                 "L3MON4D3/LuaSnip",
-                "hrsh7th/cmp-buffer",       -- source for text in buffer
-                "hrsh7th/cmp-path",         -- source for file system paths
+                "hrsh7th/cmp-buffer", -- source for text in buffer
+                "hrsh7th/cmp-path", -- source for file system paths
+                "hrsh7th/cmp-nvim-lsp",
+                "hrsh7th/cmp-cmdline",
                 "saadparwaiz1/cmp_luasnip", -- for autocompletion
+                "neovim/nvim-lspconfig",
             },
         },
         opts = function(_, opts)
@@ -57,12 +56,14 @@ return {
 
             cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
             cmp.setup({
-                --formatting = lsp_zero.cmp_format({ details = true }),
                 mapping = cmp.mapping.preset.insert({
+                    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+                    ["<C-f>"] = cmp.mapping.scroll_docs(4),
                     ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
                     ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
                     ["<CR>"] = cmp.mapping.confirm({ select = true }),
-                    ["<C-Space>"] = cmp.mapping.complete(),
+                    ["<C-y>"] = cmp.mapping.complete(),
+                    ["<C-e>"] = cmp.mapping.abort(),
                     ["<Esc>"] = cmp.mapping.close(),
                 }),
                 snippet = {
@@ -79,6 +80,25 @@ return {
                 }),
             })
 
+            -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+            cmp.setup.cmdline({ "/", "?" }, {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = {
+                    { name = "buffer" },
+                },
+            })
+
+            -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+            cmp.setup.cmdline(":", {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = cmp.config.sources({
+                    { name = "path" },
+                }, {
+                    { name = "cmdline" },
+                }),
+                matching = { disallow_symbol_nonprefix_matching = false },
+            })
+
             -- completion side effects
             vim.api.nvim_create_autocmd("LspAttach", {
                 callback = function(args)
@@ -89,47 +109,6 @@ return {
                     end
                 end,
             })
-
-            -- single tab complete
-            vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
-            vim.opt.shortmess:append("c")
-
-            local function tab_complete()
-                if vim.fn.pumvisible() == 1 then
-                    -- navigate to next item in completion menu
-                    return "<Down>"
-                end
-
-                local c = vim.fn.col(".") - 1
-                local is_whitespace = c == 0 or vim.fn.getline("."):sub(c, c):match("%s")
-
-                if is_whitespace then
-                    -- insert tab
-                    return "<Tab>"
-                end
-
-                local lsp_completion = vim.bo.omnifunc == "v:lua.vim.lsp.omnifunc"
-
-                if lsp_completion then
-                    -- trigger lsp code completion
-                    return "<C-x><C-o>"
-                end
-
-                -- suggest words in current buffer
-                return "<C-x><C-n>"
-            end
-
-            local function tab_prev()
-                if vim.fn.pumvisible() == 1 then
-                    -- navigate to previous item in completion menu
-                    return "<Up>"
-                end
-                -- insert tab
-                return "<Tab>"
-            end
-
-            vim.keymap.set("i", "<Tab>", tab_complete, { expr = true })
-            vim.keymap.set("i", "<S-Tab>", tab_prev, { expr = true })
         end,
     },
     -- LSP
@@ -149,45 +128,59 @@ return {
                 callback = function(args)
                     local opts = { buffer = args.buf }
 
-                    vim.keymap.set("n", "<C-Space>", "<C-x><C-o>", opts)
+                    local opts_with_desc = function(desc)
+                        return { buffer = args.buf, desc = "LSP: " .. desc }
+                    end
+
                     vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
                     vim.keymap.set({ "n", "x" }, "gq", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 
                     vim.keymap.set("n", "grt", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
                     vim.keymap.set("n", "grd", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+                    vim.keymap.set(
+                        "n",
+                        "gi",
+                        require("telescope.builtin").lsp_implementations,
+                        opts_with_desc("implementations")
+                    )
+                    vim.keymap.set(
+                        "n",
+                        "gre",
+                        require("telescope.builtin").lsp_references,
+                        opts_with_desc("references")
+                    )
+                    vim.keymap.set(
+                        "n",
+                        "grs",
+                        require("telescope.builtin").lsp_document_symbols,
+                        opts_with_desc("document symbols")
+                    )
+                    vim.keymap.set(
+                        "n",
+                        "grw",
+                        require("telescope.builtin").lsp_dynamic_workspace_symbols,
+                        opts_with_desc("workspace symbols")
+                    )
 
-                    local map = function(keys, func, desc)
-                        vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
+                    local client = vim.lsp.get_client_by_id(args.data.client_id)
+                    if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+                        vim.keymap.set("n", "<leader>tih", function()
+                            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+                        end, opts_with_desc("[T]oggle [I]nlay [H]ints"))
                     end
-
-                    map("gi", require("telescope.builtin").lsp_implementations, "[g]o to [i]mplementation")
-                    map("gre", require("telescope.builtin").lsp_references, "[g]o to [re]ferences")
-                    map("grs", require("telescope.builtin").lsp_document_symbols, "document [s]ymbols")
-                    map("grw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[w]orkspace symbols")
                 end,
             })
-            --[[
-            lsp_zero.on_attach(function(client, bufnr)
-                -- see :help lsp-zero-keybindings
-                -- to learn the available actions
-                -- lsp_zero.default_keymaps({buffer = bufnr})
-                lsp_status.on_attach(client)
-                -- diagnostics
 
-                -- The following autocommand is used to enable inlay hints in your
-                -- code, if the language server you are using supports them
-                --
-                -- This may be unwanted, since they displace some of your code
-                if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-                    map("<leader>tih", function()
-                        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-                    end, "[T]oggle [I]nlay [H]ints")
-                end
-            end)]]
+            -- Set up lspconfig.
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
             vim.diagnostic.config({ virtual_text = true })
 
+            vim.lsp.config("lua_ls", { capabilities = capabilities })
+            vim.lsp.enable("lua_ls")
+
             vim.lsp.config("clojure_lsp", {
+                capabilities = capabilities,
                 settings = {
                     clojure_lsp = {
                         java = {
@@ -195,53 +188,6 @@ return {
                         },
                     },
                 },
-            })
-
-            vim.lsp.config("lua_ls", {
-                on_init = function(client)
-                    if client.workspace_folders then
-                        local path = client.workspace_folders[1].name
-                        if
-                            path ~= vim.fn.stdpath("config")
-                            and (vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc"))
-                        then
-                            return
-                        end
-                    end
-
-                    client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
-                        runtime = {
-                            -- Tell the language server which version of Lua you're using (most
-                            -- likely LuaJIT in the case of Neovim)
-                            version = "LuaJIT",
-                            -- Tell the language server how to find Lua modules same way as Neovim
-                            -- (see `:h lua-module-load`)
-                            path = {
-                                "lua/?.lua",
-                                "lua/?/init.lua",
-                            },
-                        },
-
-                        diagnostics = {
-                            globals = { "vim" },
-                        },
-                        -- Make the server aware of Neovim runtime files
-                        workspace = {
-                            checkThirdParty = false,
-                            library = {
-                                vim.env.VIMRUNTIME,
-                                -- Depending on the usage, you might want to add additional paths
-                                -- here.
-                                -- '${3rd}/luv/library'
-                                -- '${3rd}/busted/library'
-                            },
-                        },
-                        completion = {
-                            callSnippet = "Replace",
-                        },
-                    })
-                end,
-                root_markers = { ".luarc.json", ".luarc.jsonc" },
             })
 
             -- Infers the full executable path based on shell command name
@@ -253,11 +199,14 @@ return {
             end
 
             vim.lsp.config("pyright", {
+                capabilities = capabilities,
                 settings = {
                     python = {
                         pythonPath = read_exec_path("python"),
                         venv = ".venv",
                         venvPath = "./.venv/",
+                        autoSearchPaths = true,
+                        useLibraryCodeForTypes = true,
                     },
                 },
             })
