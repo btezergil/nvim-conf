@@ -48,6 +48,7 @@ return {
 		vim.keymap.set("n", "<leader>pg", builtin.live_grep, { desc = "Live [g]rep" })
 		vim.keymap.set("n", "<leader>ph", builtin.help_tags, { desc = "Search [h]elp" })
 		vim.keymap.set("n", "<leader>p?", builtin.oldfiles, { desc = "[?] Find recently opened files" })
+		vim.keymap.set("n", "<leader>pd", builtin.diagnostics, { desc = "Workspace [d]iagnostics" })
 		vim.keymap.set("n", "<leader>ps", function()
 			builtin.grep_string({ search = vim.fn.input("Grep > ") })
 		end, { desc = "Grep [s]tring" })
