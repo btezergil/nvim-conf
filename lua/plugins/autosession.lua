@@ -1,26 +1,20 @@
 return {
-    {
-      'rmagatti/auto-session',
-      dependencies = {
-        'nvim-telescope/telescope.nvim', -- Only needed if you want to use sesssion lens
-      },
-      config = function()
-        require('auto-session').setup({
-            log_level = 'error',
-            auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-    
-            -- ⚠️ This will only work if Telescope.nvim is installed
-            -- The following are already the default values, no need to provide them if these are already the settings you want.
-            session_lens = {
-              -- If load_on_setup is set to false, one needs to eventually call `require("auto-session").setup_session_lens()` if they want to use session-lens.
-              load_on_setup = true,
-              theme_conf = { border = true },
-              previewer = false,
-              buftypes_to_ignore = {}, -- list of buffer types that should not be deleted from current session when a new one is loaded
-            },
+    "rmagatti/auto-session",
+    lazy = false,
 
-            vim.keymap.set("n", "<C-s>", require("auto-session.session-lens").search_session, {noremap = true})
-          })
-      end,
-    }
+    dependencies = {
+        "nvim-telescope/telescope.nvim", -- Only needed if you want to use sesssion lens
+    },
+    keys = {
+        -- Will use Telescope if installed or a vim.ui.select picker otherwise
+        { "<C-s>", "<cmd>SessionSearch<CR>", desc = "Session search" },
+    },
+
+    ---enables autocomplete for opts
+    ---@module "auto-session"
+    ---@type AutoSession.Config
+    opts = {
+        suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+        -- log_level = 'debug',
+    },
 }
